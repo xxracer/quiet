@@ -1,0 +1,25 @@
+[
+  {
+    "id": "prod_1776219177906_0ijiopg9p",
+    "name": "qedacs",
+    "slug": "qedacs",
+    "price": 3,
+    "comparePrice": 2,
+    "category": "dinner-plates",
+    "shortDescription": "ads",
+    "fullDescription": "ads",
+    "images": [
+      "https://quietwaredishes.com/wp-content/uploads/2023/04/Quietware-Artboard-6-B-copy-2.webp"
+    ],
+    "specifications": {
+      "diameter": "f",
+      "material": "f",
+      "noiseReduction": "f",
+      "weight": "f",
+      "dishwasherSafe": true
+    },
+    "featured": false,
+    "usaMade": true,
+    "createdAt": "2026-04-15T02:12:57.907Z"
+  }
+]
