@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowLeft, Upload, X } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/auth-context";
 
 const categories = [
   { value: "dinner-plates", label: "Dinner Plates" },
@@ -15,6 +16,7 @@ const categories = [
 ];
 
 export default function NewProductPage() {
+  const { user, isAdmin } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>([]);
@@ -36,6 +38,28 @@ export default function NewProductPage() {
     featured: false,
     usaMade: true,
   });
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/admin/login");
+      return;
+    }
+    if (!isAdmin) {
+      router.push("/admin/login?error=unauthorized");
+      return;
+    }
+  }, [user, isAdmin, router]);
+
+  if (!user || !isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-[#292524] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-[#78716c]">Verificando permisos...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

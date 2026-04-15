@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Shield, Truck, Award, Leaf } from "lucide-react";
 import { defaultSiteContent, SiteContent } from "@/lib/site-content";
+import { HeroCarousel } from "@/components/home/hero-carousel";
 
 const trustBadges = [
   { icon: Shield, title: "Noise Reduction Certified", description: "Lab-tested acoustic dampening technology" },
@@ -25,21 +26,34 @@ export function HeroSection() {
   }, []);
 
   const hero = content?.hero || defaultSiteContent.hero;
+  const heroImages = hero.images || [];
+  const staticHeroImage = hero.staticImage;
+  const hasImages = heroImages.length > 0 || staticHeroImage;
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-[#fafaf9] to-[#f5f5f4]">
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          animate={{ scale: [1, 1.1, 1], rotate: [0, 5, 0] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-[#e7e5e4]/50 to-transparent blur-3xl"
-        />
-        <motion.div
-          animate={{ scale: [1, 1.2, 1], rotate: [0, -5, 0] }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-[#d6d3d1]/30 to-transparent blur-3xl"
-        />
-      </div>
+      {/* Hero Background Images/Carousel */}
+      {hasImages && (
+        <div className="absolute inset-0 z-0">
+          <HeroCarousel images={heroImages} staticImage={staticHeroImage} />
+        </div>
+      )}
+
+      {/* Decorative gradients (only if no images) */}
+      {!hasImages && (
+        <div className="absolute inset-0 overflow-hidden">
+          <motion.div
+            animate={{ scale: [1, 1.1, 1], rotate: [0, 5, 0] }}
+            transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-[#e7e5e4]/50 to-transparent blur-3xl"
+          />
+          <motion.div
+            animate={{ scale: [1, 1.2, 1], rotate: [0, -5, 0] }}
+            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-[#d6d3d1]/30 to-transparent blur-3xl"
+          />
+        </div>
+      )}
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>

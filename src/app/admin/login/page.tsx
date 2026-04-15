@@ -1,8 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { signInWithPopup } from "firebase/auth";
+import { signInWithPopup, signOut } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
+
+// Lista de emails autorizados (también en .env)
+const ALLOWED_ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "")
+  .split(",")
+  .map(email => email.trim().toLowerCase())
+  .filter(Boolean);
 
 export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false);
@@ -12,8 +18,17 @@ export default function AdminLoginPage() {
     setLoading(true);
     setError("");
     try {
-      await signInWithPopup(auth, googleProvider);
-      window.location.href = "/admin";
+      const result = await signInWithPopup(auth, googleProvider);
+      const userEmail = result.user.email?.toLowerCase();
+
+      if (userEmail && ALLOWED_ADMIN_EMAILS.includes(userEmail)) {
+        window.location.href = "/admin";
+      } else {
+        // Email no autorizado - cerrar sesión y mostrar error
+        await signOut(auth);
+        setError("Este email no tiene permisos de administrador. Contacta al soporte si necesitas acceso.");
+        setLoading(false);
+      }
     } catch (err: any) {
       console.error("Login error:", err);
       setError(err.message || "Error al iniciar sesión");

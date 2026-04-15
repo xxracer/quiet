@@ -6,19 +6,45 @@ import { Save, X, Plus, ArrowLeft, Image as ImageIcon, Type, MessageSquare, Sett
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { defaultSiteContent, SiteContent, Testimonial, FAQ } from "@/lib/site-content";
+import { useAuth } from "@/contexts/auth-context";
+import { useRouter } from "next/navigation";
 
-type Tab = "hero" | "featured" | "value" | "faq" | "testimonials" | "cta" | "footer" | "products";
+type Tab = "hero" | "hero-images" | "featured" | "value" | "faq" | "testimonials" | "cta" | "footer" | "products";
 
 export default function CMSPage() {
+  const { user, isAdmin } = useAuth();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<Tab>("hero");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [content, setContent] = useState<SiteContent>(defaultSiteContent);
+  const [heroImages, setHeroImages] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
+    if (!user) {
+      router.push("/admin/login");
+      return;
+    }
+    if (!isAdmin) {
+      router.push("/admin/login?error=unauthorized");
+      return;
+    }
     fetchSiteContent();
-  }, []);
+    fetchHeroImages();
+  }, [user, isAdmin, router]);
+
+  if (!user || !isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-[#292524] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-[#78716c]">Verificando permisos...</p>
+        </div>
+      </div>
+    );
+  }
 
   const fetchSiteContent = async () => {
     try {
@@ -31,6 +57,18 @@ export default function CMSPage() {
       console.error("Failed to fetch content:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchHeroImages = async () => {
+    try {
+      const res = await fetch("/api/hero-images?action=list");
+      if (res.ok) {
+        const data = await res.json();
+        setHeroImages(data.images?.map((img: any) => img.url) || []);
+      }
+    } catch (error) {
+      console.error("Failed to fetch hero images:", error);
     }
   };
 
@@ -85,8 +123,79 @@ export default function CMSPage() {
     setContent({ ...content, testimonials: content.testimonials.filter((_, i) => i !== index) });
   };
 
+  const handleUploadHeroImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    setMessage(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("action", "upload");
+
+      const res = await fetch("/api/hero-images", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const newImages = [...heroImages, data.url];
+        setHeroImages(newImages);
+        setContent({
+          ...content,
+          hero: { ...content.hero, images: newImages },
+        });
+        setMessage({ type: "success", text: "Image uploaded successfully!" });
+      } else {
+        throw new Error("Upload failed");
+      }
+    } catch (error) {
+      setMessage({ type: "error", text: "Failed to upload image" });
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  };
+
+  const handleRemoveHeroImage = async (index: number) => {
+    const urlToRemove = heroImages[index];
+    try {
+      const filename = urlToRemove.split("/").pop();
+      await fetch(`/api/hero-images?filename=${encodeURIComponent(`hero/${filename}`)}`, {
+        method: "DELETE",
+      });
+    } catch (error) {
+      console.error("Failed to delete from blob:", error);
+    }
+
+    const newImages = heroImages.filter((_, i) => i !== index);
+    setHeroImages(newImages);
+    setContent({
+      ...content,
+      hero: { ...content.hero, images: newImages },
+    });
+  };
+
+  const handleSetStaticHeroImage = (url: string) => {
+    setContent({
+      ...content,
+      hero: { ...content.hero, staticImage: url, images: [] },
+    });
+  };
+
+  const handleSetCarouselMode = () => {
+    setContent({
+      ...content,
+      hero: { ...content.hero, staticImage: undefined, images: heroImages },
+    });
+  };
+
   const tabs = [
     { id: "hero", label: "Hero", icon: Home },
+    { id: "hero-images", label: "Hero Images", icon: ImageIcon },
     { id: "featured", label: "Featured", icon: ImageIcon },
     { id: "value", label: "Value Prop", icon: Type },
     { id: "faq", label: "FAQ", icon: MessageSquare },
@@ -152,6 +261,12 @@ export default function CMSPage() {
         {activeTab === "hero" && (
           <div className="space-y-6">
             <h2 className="font-medium text-lg">Hero Section</h2>
+            <div className="mb-4 p-4 bg-[#f5f5f4] rounded-lg">
+              <p className="text-sm text-[#78716c]">
+                Configura las imágenes del hero en la pestaña <strong>"Hero Images"</strong>.
+                Puedes usar un carousel con múltiples imágenes o una imagen estática.
+              </p>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium mb-2">Badge Text</label>
@@ -197,6 +312,103 @@ export default function CMSPage() {
               <input type="url" value={content.hero.imageUrl} onChange={(e) => setContent({ ...content, hero: { ...content.hero, imageUrl: e.target.value } })} className="w-full px-4 py-3 border border-[#e7e5e4] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#292524]" />
               {content.hero.imageUrl && <img src={content.hero.imageUrl} alt="Hero preview" className="mt-4 w-full max-w-md rounded-lg" />}
             </div>
+          </div>
+        )}
+
+        {activeTab === "hero-images" && (
+          <div className="space-y-6">
+            <h2 className="font-medium text-lg">Hero Images</h2>
+            <p className="text-sm text-[#78716c]">
+              Sube imágenes para el hero. Puedes usar múltiples imágenes (carousel) o una sola imagen estática.
+            </p>
+
+            {/* Upload */}
+            <div className="border border-[#e7e5e4] rounded-lg p-6">
+              <label className="block text-sm font-medium mb-2">Subir nueva imagen</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleUploadHeroImage}
+                disabled={uploading}
+                className="w-full px-4 py-3 border border-[#e7e5e4] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#292524]"
+              />
+              {uploading && (
+                <div className="mt-2 text-sm text-[#78716c]">Subiendo imagen...</div>
+              )}
+            </div>
+
+            {/* Mode selection */}
+            <div className="border border-[#e7e5e4] rounded-lg p-6">
+              <label className="block text-sm font-medium mb-3">Modo de visualización</label>
+              <div className="flex gap-4">
+                <button
+                  onClick={handleSetCarouselMode}
+                  className={`flex-1 p-4 rounded-lg border-2 transition-colors ${
+                    content.hero.images && content.hero.images.length > 0 && !content.hero.staticImage
+                      ? "border-[#292524] bg-[#f5f5f4]"
+                      : "border-[#e7e5e4] hover:border-[#a8a29e]"
+                  }`}
+                >
+                  <ImageIcon className="w-6 h-6 mb-2" />
+                  <p className="font-medium">Carousel</p>
+                  <p className="text-xs text-[#78716c]">Múltiples imágenes rotativas</p>
+                </button>
+                <button
+                  onClick={() => content.hero.staticImage && handleSetStaticHeroImage(content.hero.staticImage!)}
+                  className={`flex-1 p-4 rounded-lg border-2 transition-colors ${
+                    content.hero.staticImage
+                      ? "border-[#292524] bg-[#f5f5f4]"
+                      : "border-[#e7e5e4] hover:border-[#a8a29e]"
+                  }`}
+                >
+                  <Type className="w-6 h-6 mb-2" />
+                  <p className="font-medium">Imagen Estática</p>
+                  <p className="text-xs text-[#78716c]">Una sola imagen fija</p>
+                </button>
+              </div>
+            </div>
+
+            {/* Images list */}
+            {heroImages.length > 0 && (
+              <div className="border border-[#e7e5e4] rounded-lg p-6">
+                <h3 className="font-medium mb-4">Imágenes subidas ({heroImages.length})</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {heroImages.map((url, index) => (
+                    <div key={index} className="relative group">
+                      <img src={url} alt={`Hero ${index + 1}`} className="w-full aspect-video object-cover rounded-lg" />
+                      <button
+                        onClick={() => handleRemoveHeroImage(index)}
+                        className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleSetStaticHeroImage(url)}
+                        className="absolute bottom-2 right-2 p-1.5 bg-[#292524] text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        title="Usar como imagen estática"
+                      >
+                        <Type className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {heroImages.length === 0 && (
+              <div className="border border-[#e7e5e4] rounded-lg p-8 text-center">
+                <ImageIcon className="w-12 h-12 text-[#78716c] mx-auto mb-4" />
+                <p className="text-[#78716c]">No hay imágenes subidas. Sube una imagen para comenzar.</p>
+              </div>
+            )}
+
+            {/* Preview */}
+            {content.hero.staticImage && (
+              <div className="border border-[#e7e5e4] rounded-lg p-6">
+                <h3 className="font-medium mb-4">Vista previa (Imagen estática)</h3>
+                <img src={content.hero.staticImage} alt="Static preview" className="w-full max-w-md rounded-lg" />
+              </div>
+            )}
           </div>
         )}
 

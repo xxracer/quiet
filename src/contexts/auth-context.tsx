@@ -19,20 +19,31 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   error: string | null;
+  isAdmin: boolean;
   signInWithGoogle: () => Promise<void>;
   logOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Lista de emails autorizados para admin
+const ALLOWED_ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "")
+  .split(",")
+  .map(email => email.trim().toLowerCase())
+  .filter(Boolean);
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Verificar si el usuario actual es admin
+  const isAdmin = user?.email ? ALLOWED_ADMIN_EMAILS.includes(user.email.toLowerCase()) : false;
+
   useEffect(() => {
     console.log("AuthProvider: Initializing Firebase Auth...");
     console.log("Auth domain:", auth.app.options.authDomain);
+    console.log("Allowed admin emails:", ALLOWED_ADMIN_EMAILS);
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       console.log("Auth state changed:", user?.email || "no user");
@@ -70,7 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, error, signInWithGoogle, logOut }}>
+    <AuthContext.Provider value={{ user, loading, error, isAdmin, signInWithGoogle, logOut }}>
       {children}
     </AuthContext.Provider>
   );

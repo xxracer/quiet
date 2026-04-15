@@ -11,6 +11,8 @@ export interface SiteContent {
     cta2Text: string;
     cta2Link: string;
     imageUrl: string;
+    images?: string[]; // For carousel (multiple images)
+    staticImage?: string; // For single static image
   };
   featuredProducts: {
     title: string;

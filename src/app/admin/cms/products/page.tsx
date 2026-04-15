@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Plus, Edit, Trash2, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils";
+import { useAuth } from "@/contexts/auth-context";
+import { useRouter } from "next/navigation";
 
 interface Product {
   id: string;
@@ -28,13 +30,34 @@ interface Product {
 }
 
 export default function CMSProductsPage() {
+  const { user, isAdmin } = useAuth();
+  const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!user) {
+      router.push("/admin/login");
+      return;
+    }
+    if (!isAdmin) {
+      router.push("/admin/login?error=unauthorized");
+      return;
+    }
     fetchProducts();
-  }, []);
+  }, [user, isAdmin, router]);
+
+  if (!user || !isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-[#292524] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-[#78716c]">Verificando permisos...</p>
+        </div>
+      </div>
+    );
+  }
 
   const fetchProducts = async () => {
     try {

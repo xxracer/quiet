@@ -1,13 +1,39 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Package, Plus, LogOut, ShoppingBag, Star, Settings } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth-context";
+import { useRouter } from "next/navigation";
 
 export default function AdminDashboard() {
-  const { user, logOut } = useAuth();
+  const { user, isAdmin, logOut } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/admin/login");
+      return;
+    }
+    if (!isAdmin) {
+      // Usuario logueado pero no es admin
+      router.push("/admin/login?error=unauthorized");
+      return;
+    }
+  }, [user, isAdmin, router]);
+
+  if (!user || !isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-[#292524] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-[#78716c]">Verificando permisos...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8">
