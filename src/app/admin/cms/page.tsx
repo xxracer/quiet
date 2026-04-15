@@ -142,7 +142,9 @@ export default function CMSPage() {
 
       if (res.ok) {
         const data = await res.json();
-        const newImages = [...heroImages, data.url];
+        // Guardar la URL pública completa
+        const imageUrl = data.url;
+        const newImages = [...heroImages, imageUrl];
         setHeroImages(newImages);
         setContent({
           ...content,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Package, Plus, LogOut, ShoppingBag, Star, Settings } from "lucide-react";
 import Link from "next/link";
@@ -8,9 +8,24 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth-context";
 import { useRouter } from "next/navigation";
 
+interface Product {
+  id: string;
+  name: string;
+  slug: string;
+  price: number;
+  comparePrice?: number;
+  images: string[];
+  category: string;
+  shortDescription: string;
+  featured: boolean;
+  usaMade: boolean;
+}
+
 export default function AdminDashboard() {
   const { user, isAdmin, logOut } = useAuth();
   const router = useRouter();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
 
   useEffect(() => {
     if (!user) {
@@ -18,11 +33,25 @@ export default function AdminDashboard() {
       return;
     }
     if (!isAdmin) {
-      // Usuario logueado pero no es admin
       router.push("/admin/login?error=unauthorized");
       return;
     }
+    fetchProducts();
   }, [user, isAdmin, router]);
+
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch("/api/products");
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setProducts(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+    } finally {
+      setLoadingProducts(false);
+    }
+  };
 
   if (!user || !isAdmin) {
     return (
@@ -60,7 +89,7 @@ export default function AdminDashboard() {
             </div>
             <div>
               <p className="text-[#78716c] text-sm">Total Products</p>
-              <p className="text-2xl font-semibold">0</p>
+              <p className="text-2xl font-semibold">{loadingProducts ? "..." : products.length}</p>
             </div>
           </div>
         </motion.div>
@@ -144,18 +173,54 @@ export default function AdminDashboard() {
                 <th className="text-left p-4 text-sm font-medium text-[#78716c]">Product</th>
                 <th className="text-left p-4 text-sm font-medium text-[#78716c]">Category</th>
                 <th className="text-left p-4 text-sm font-medium text-[#78716c]">Price</th>
-                <th className="text-left p-4 text-sm font-medium text-[#78716c]">Stock</th>
+                <th className="text-left p-4 text-sm font-medium text-[#78716c]">Featured</th>
                 <th className="text-left p-4 text-sm font-medium text-[#78716c]">Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr className="border-t border-[#e7e5e4]">
-                <td className="p-4 text-[#78716c] text-sm">No products yet</td>
-                <td className="p-4"></td>
-                <td className="p-4"></td>
-                <td className="p-4"></td>
-                <td className="p-4"></td>
-              </tr>
+              {loadingProducts ? (
+                <tr className="border-t border-[#e7e5e4]">
+                  <td className="p-4 text-[#78716c] text-sm" colSpan={5}>Loading products...</td>
+                </tr>
+              ) : products.length === 0 ? (
+                <tr className="border-t border-[#e7e5e4]">
+                  <td className="p-4 text-[#78716c] text-sm" colSpan={5}>No products yet. Add your first product!</td>
+                </tr>
+              ) : (
+                products.map((product) => (
+                  <tr key={product.id} className="border-t border-[#e7e5e4]">
+                    <td className="p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-[#f5f5f4] rounded-lg overflow-hidden flex-shrink-0">
+                          {product.images[0] ? (
+                            <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-[#78716c]">
+                              <Package className="w-5 h-5" />
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-medium">{product.name}</p>
+                          <p className="text-xs text-[#78716c]">{product.shortDescription.slice(0, 50)}...</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="p-4 text-sm text-[#78716c]">{product.category.replace("-", " ")}</td>
+                    <td className="p-4 font-medium">${product.price}</td>
+                    <td className="p-4">
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${product.featured ? "bg-green-100 text-green-600" : "bg-[#f5f5f4] text-[#78716c]"}`}>
+                        {product.featured ? "Yes" : "No"}
+                      </span>
+                    </td>
+                    <td className="p-4">
+                      <Link href={`/admin/products/edit/${product.id}`}>
+                        <Button variant="outline" size="sm">Edit</Button>
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

@@ -7,11 +7,11 @@ export async function GET(request: NextRequest) {
     const action = searchParams.get("action");
 
     if (action === "list") {
-      // List all hero images
+      // List all hero images - return signed URLs
       const blobResponse = await list({ prefix: "hero/" });
       const images = blobResponse.blobs.map((blob) => ({
-        url: blob.url,
-        filename: blob.pathname,
+        url: blob.downloadUrl,
+        pathname: blob.pathname,
         uploadedAt: blob.uploadedAt,
       }));
       return NextResponse.json({ images });

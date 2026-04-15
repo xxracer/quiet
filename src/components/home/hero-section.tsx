@@ -34,9 +34,13 @@ export function HeroSection() {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-[#fafaf9] to-[#f5f5f4]">
       {/* Hero Background Images/Carousel */}
       {hasImages && (
-        <div className="absolute inset-0 z-0">
-          <HeroCarousel images={heroImages} staticImage={staticHeroImage} />
-        </div>
+        <>
+          <div className="absolute inset-0 z-0">
+            <HeroCarousel images={heroImages} staticImage={staticHeroImage} />
+          </div>
+          {/* Dark overlay for better text readability */}
+          <div className="absolute inset-0 z-10 bg-black/40" />
+        </>
       )}
 
       {/* Decorative gradients (only if no images) */}
@@ -55,21 +59,21 @@ export function HeroSection() {
         </div>
       )}
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center">
+      <div className={`relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center ${hasImages ? 'text-white' : ''}`}>
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-[#f5f5f4] rounded-full mb-8"
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 ${hasImages ? 'bg-white/20 backdrop-blur-sm' : 'bg-[#f5f5f4]'}`}
           >
-            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            <span className="text-sm font-medium text-[#78716c]">{hero.badge}</span>
+            <span className={`w-2 h-2 rounded-full animate-pulse ${hasImages ? 'bg-green-400' : 'bg-green-500'}`} />
+            <span className={`text-sm font-medium ${hasImages ? 'text-white' : 'text-[#78716c]'}`}>{hero.badge}</span>
           </motion.div>
 
           <h1 className="font-playfair text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-medium leading-[1.1] tracking-tight mb-8">
             <motion.span initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="block">{hero.title1}</motion.span>
-            <motion.span initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="block text-[#78716c]">{hero.title2}</motion.span>
+            <motion.span initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className={`block ${hasImages ? 'text-white/90' : 'text-[#78716c]'}`}>{hero.title2}</motion.span>
             <motion.span initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="block">{hero.title3}</motion.span>
           </h1>
 
@@ -77,7 +81,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="max-w-2xl mx-auto text-lg sm:text-xl text-[#78716c] mb-12 leading-relaxed"
+            className={`max-w-2xl mx-auto text-lg sm:text-xl mb-12 leading-relaxed ${hasImages ? 'text-white/90' : 'text-[#78716c]'}`}
           >
             {hero.description}
           </motion.p>
@@ -95,7 +99,7 @@ export function HeroSection() {
               </Button>
             </Link>
             <Link href={hero.cta2Link}>
-              <Button variant="outline" size="lg">{hero.cta2Text}</Button>
+              <Button variant="outline" size="lg" className={hasImages ? 'bg-white/10 text-white border-white/30 hover:bg-white/20' : ''}>{hero.cta2Text}</Button>
             </Link>
           </motion.div>
         </motion.div>
@@ -112,11 +116,11 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1 + index * 0.1 }}
-              className="flex flex-col items-center text-center p-6 bg-[#fafaf9]/50 backdrop-blur-sm rounded-2xl"
+              className={`flex flex-col items-center text-center p-6 rounded-2xl ${hasImages ? 'bg-white/10 backdrop-blur-sm' : 'bg-[#fafaf9]/50 backdrop-blur-sm'}`}
             >
-              <badge.icon className="w-8 h-8 text-[#292524] mb-3" />
-              <h3 className="font-medium text-sm mb-1">{badge.title}</h3>
-              <p className="text-xs text-[#78716c]">{badge.description}</p>
+              <badge.icon className={`w-8 h-8 mb-3 ${hasImages ? 'text-white' : 'text-[#292524]'}`} />
+              <h3 className={`font-medium text-sm mb-1 ${hasImages ? 'text-white' : ''}`}>{badge.title}</h3>
+              <p className={`text-xs ${hasImages ? 'text-white/80' : 'text-[#78716c]'}`}>{badge.description}</p>
             </motion.div>
           ))}
         </motion.div>
