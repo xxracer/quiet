@@ -24,23 +24,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  switch (event.type) {
-    case "checkout.session.completed": {
-      const session = event.data.object as Stripe.Checkout.Session;
-      console.log("Checkout completed:", session.id);
-      break;
-    }
-    case "payment_intent.succeeded": {
-      const paymentIntent = event.data.object as Stripe.PaymentIntent;
-      console.log("Payment succeeded:", paymentIntent.id);
-      break;
-    }
-    case "payment_intent.payment_failed": {
-      const paymentIntent = event.data.object as Stripe.PaymentIntent;
-      console.log("Payment failed:", paymentIntent.id);
-      break;
-    }
-  }
+  // Stripe events received and acknowledged. Add business logic here if needed.
+  // Avoid console logging production webhook payloads to prevent leaking PII.
 
   return NextResponse.json({ received: true });
 }

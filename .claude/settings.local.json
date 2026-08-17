@@ -2,7 +2,39 @@
   "permissions": {
     "allow": [
       "Bash(npm run *)",
-      "WebFetch(domain:bodybib.com)"
+      "WebFetch(domain:bodybib.com)",
+      "WebFetch(domain:www.phonespuds.com)",
+      "WebFetch(domain:quietwaredishes.com)",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__navigate_page",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_pages",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_screenshot",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_snapshot",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__resize_page",
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "mcp__plugin_playwright_playwright__browser_resize",
+      "mcp__plugin_playwright_playwright__browser_console_messages",
+      "WebFetch(domain:images.unsplash.com)",
+      "WebSearch",
+      "WebFetch(domain:unsplash.com)",
+      "mcp__plugin_playwright_playwright__browser_evaluate",
+      "mcp__ide__executeCode",
+      "Bash(python *)",
+      "mcp__plugin_playwright_playwright__browser_take_screenshot",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__lighthouse_audit",
+      "Bash(node *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(curl -s http://localhost:3000/robots.txt)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/sitemap.xml)",
+      "Bash(curl -s http://localhost:3000/sitemap.xml)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/favicon.ico)",
+      "Bash(curl -s http://localhost:3000/favicon.ico)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(taskkill /PID 20060 /F)",
+      "Bash(cmd //c \"taskkill /PID 20060 /F\")",
+      "Bash(curl -s http://localhost:3000 -o /dev/null -w \\\\\"%{pid}\\\\\")",
+      "Bash(cmd //c \"taskkill /PID $\\(curl -s http://localhost:3000 -o /dev/null -w \\\\\"%{pid}\\\\\"\\) /F\")",
+      "Bash(cmd //c \"taskkill /F /IM node.exe\")"
     ]
   }
 }

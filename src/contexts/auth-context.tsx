@@ -41,16 +41,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isAdmin = user?.email ? ALLOWED_ADMIN_EMAILS.includes(user.email.toLowerCase()) : false;
 
   useEffect(() => {
-    console.log("AuthProvider: Initializing Firebase Auth...");
-    console.log("Auth domain:", auth.app.options.authDomain);
-    console.log("Allowed admin emails:", ALLOWED_ADMIN_EMAILS);
-
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log("Auth state changed:", user?.email || "no user");
       setUser(user);
       setLoading(false);
     }, (error) => {
-      console.error("Auth error:", error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Auth error:", error);
+      }
       setError(error.message);
       setLoading(false);
     });
@@ -61,11 +58,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signInWithGoogle = async () => {
     try {
       setError(null);
-      console.log("Attempting Google sign-in...");
       await signInWithPopup(auth, googleProvider);
-      console.log("Sign-in successful!");
     } catch (err: any) {
-      console.error("Google sign-in error:", err.code, err.message);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Google sign-in error:", err.code, err.message);
+      }
       setError(err.message);
       throw err;
     }
@@ -75,7 +72,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await signOut(auth);
     } catch (err: any) {
-      console.error("Sign-out error:", err);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Sign-out error:", err);
+      }
       throw err;
     }
   };

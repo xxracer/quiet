@@ -1,27 +1,147 @@
 import { Product } from "@/lib/products";
 
-export function generateProductSchema(product: Product) {
-  const savings = product.comparePrice
-    ? ((Number(product.comparePrice) - product.price) / Number(product.comparePrice)) * 100
-    : 0;
+const BASE_URL = "https://quietwaredishes.com";
+const BRAND_NAME = "QuietWare Dishes";
+const BRAND_TAGLINE =
+  "Premium noise-free dinnerware engineered with acoustic dampening technology for peaceful dining in American homes.";
 
+export function generateOrganizationSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: BRAND_NAME,
+    alternateName: "QuietWare",
+    url: BASE_URL,
+    logo: `${BASE_URL}/logo.png`,
+    description: BRAND_TAGLINE,
+    sameAs: [
+      "https://www.facebook.com/quietwaredishes",
+      "https://www.instagram.com/quietwaredishes",
+      "https://www.youtube.com/channel/UCMjxPrOzEhZM6f1as6bpFBw",
+      "https://www.linkedin.com/in/justin-szilagyi-020b771b1",
+    ],
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+1-800-QUIET-PLATE",
+      contactType: "Customer Service",
+      email: "info@quietwaredishes.com",
+      availableLanguage: "English",
+      areaServed: "US",
+    },
+  };
+}
+
+export function generateWebSiteSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: BRAND_NAME,
+    url: BASE_URL,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${BASE_URL}/products?search={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+}
+
+export function generateLocalBusinessSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": ["LocalBusiness", "HomeAndConstructionBusiness"],
+    name: BRAND_NAME,
+    description: BRAND_TAGLINE,
+    url: BASE_URL,
+    image: `${BASE_URL}/og-image.jpg`,
+    priceRange: "$ - $$$",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Ohio",
+      addressRegion: "OH",
+      addressCountry: "US",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 40.4173,
+      longitude: -82.9071,
+    },
+    telephone: "+1-800-QUIET-PLATE",
+    email: "info@quietwaredishes.com",
+    openingHoursSpecification: {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: "09:00",
+      closes: "17:00",
+    },
+    sameAs: [
+      "https://www.facebook.com/quietwaredishes",
+      "https://www.instagram.com/quietwaredishes",
+      "https://www.youtube.com/channel/UCMjxPrOzEhZM6f1as6bpFBw",
+    ],
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.9",
+      reviewCount: "50000",
+      bestRating: "5",
+      worstRating: "1",
+    },
+    brand: {
+      "@type": "Brand",
+      name: "QuietWare",
+      description: BRAND_TAGLINE,
+    },
+    areaServed: {
+      "@type": "Country",
+      name: "United States",
+    },
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Quiet Dinnerware",
+      itemListElement: [
+        { "@type": "Offer", itemOffered: { "@type": "Product", name: "Dinner Plates" } },
+        { "@type": "Offer", itemOffered: { "@type": "Product", name: "Bowls" } },
+        { "@type": "Offer", itemOffered: { "@type": "Product", name: "Side Plates" } },
+        { "@type": "Offer", itemOffered: { "@type": "Product", name: "Dinner Sets" } },
+      ],
+    },
+  };
+}
+
+export function generateProductSchema(product: Product) {
   return {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
     description: product.shortDescription,
     image: product.images,
+    sku: product.id,
+    mpn: `QW-${product.id}`,
+    gtin13: "1234567890123",
+    brand: {
+      "@type": "Brand",
+      name: "QuietWare",
+      description: BRAND_TAGLINE,
+      url: BASE_URL,
+    },
+    category: `Quiet ${product.category.replace("-", " ")}`,
     offers: {
       "@type": "Offer",
+      url: `${BASE_URL}/products/${product.slug}`,
       price: product.price.toFixed(2),
       priceCurrency: "USD",
-      availability: product.inStock
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
+      priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+      availability:
+        product.inStock === false
+          ? "https://schema.org/OutOfStock"
+          : "https://schema.org/InStock",
+      itemCondition: "https://schema.org/NewCondition",
       seller: {
         "@type": "Organization",
-        name: "QuietWare Dishes",
-        url: "https://quietwaredishes.com",
+        name: BRAND_NAME,
+        url: BASE_URL,
       },
       shippingDetails: {
         "@type": "OfferShippingDetails",
@@ -35,36 +155,37 @@ export function generateProductSchema(product: Product) {
           addressCountry: "US",
         },
         deliveryTime: {
-          "@type": "QueryTimes",
+          "@type": "ShippingDeliveryTime",
           handlingTime: {
-            "@type": "Duration",
-            duration: "P1D",
+            "@type": "QuantitativeValue",
+            minValue: 0,
+            maxValue: 1,
+            unitCode: "DAY",
           },
           transitTime: {
-            "@type": "Duration",
-            duration: "P3D",
+            "@type": "QuantitativeValue",
+            minValue: 2,
+            maxValue: 5,
+            unitCode: "DAY",
           },
         },
+      },
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        applicableCountry: "US",
+        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 30,
+        returnMethod: "https://schema.org/ReturnByMail",
+        returnFees: "https://schema.org/FreeReturn",
       },
     },
     aggregateRating: {
       "@type": "AggregateRating",
-      ratingValue: product.rating,
-      reviewCount: product.reviews,
+      ratingValue: product.rating || 0,
+      reviewCount: product.reviews || 0,
       bestRating: "5",
       worstRating: "1",
     },
-    brand: {
-      "@type": "Brand",
-      name: "QuietWare",
-      description:
-        "Premium noise-free dinnerware engineered with acoustic dampening technology for peaceful dining in American homes.",
-      url: "https://quietwaredishes.com",
-    },
-    category: `Quiet ${product.category.replace("-", " ")}`,
-    sku: product.id,
-    mpn: `QW-${product.id}`,
-    gtin13: "1234567890123",
     additionalProperty: [
       {
         "@type": "PropertyValue",
@@ -81,158 +202,34 @@ export function generateProductSchema(product: Product) {
         name: "countryOfOrigin",
         value: "United States",
       },
+      {
+        "@type": "PropertyValue",
+        name: "dishwasherSafe",
+        value: product.specifications.dishwasherSafe ? "Yes" : "No",
+      },
     ],
-    isSimilarTo: [
+    isRelatedTo: [
       {
         "@type": "Product",
         name: "Traditional Ceramic Plates",
-        description:
-          "Standard ceramic dinnerware without acoustic dampening technology",
+        description: "Standard ceramic dinnerware without acoustic dampening technology",
       },
     ],
-    hasMerchantReturnPolicy: {
-      "@type": "MerchantReturnPolicy",
-      applicableCountry: "US",
-      returnPolicyCategory:
-        "https://schema.org/MerchantReturnFiniteReturnWindow",
-      merchantReturnDays: 30,
-      returnMethod: "https://schema.org/ReturnByMail",
-      returnFees: "https://schema.org/FreeReturn",
-    },
   };
 }
 
-export function generateLocalBusinessSchema() {
-  return {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    name: "QuietWare Dishes",
-    description:
-      "Premium noise-free dinnerware engineered with acoustic dampening technology. Made in the USA with sustainable, non-toxic materials.",
-    url: "https://quietwaredishes.com",
-    image: "https://quietwaredishes.com/og-image.jpg",
-    priceRange: "$ - $$$",
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "Ohio",
-      addressRegion: "OH",
-      addressCountry: "US",
-    },
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: 40.4173,
-      longitude: -82.9071,
-    },
-    telephone: "+1-800-QUIET-PLATE",
-    email: "support@quietwaredishes.com",
-    openingHoursSpecification: {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-      ],
-      opens: "09:00",
-      closes: "17:00",
-    },
-    sameAs: [
-      "https://www.facebook.com/quietwaredishes",
-      "https://www.instagram.com/quietwaredishes",
-      "https://twitter.com/quietwaredishes",
-    ],
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.9",
-      reviewCount: "50000",
-      bestRating: "5",
-      worstRating: "1",
-    },
-    brand: {
-      "@type": "Brand",
-      name: "QuietWare",
-    },
-    areaServed: {
-      "@type": "Country",
-      name: "United States",
-    },
-    hasOfferCatalog: {
-      "@type": "OfferCatalog",
-      name: "Quiet Dinnerware",
-      itemListElement: [
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Product",
-            name: "Dinner Plates",
-          },
-        },
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Product",
-            name: "Bowls",
-          },
-        },
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Product",
-            name: "Dinner Sets",
-          },
-        },
-      ],
-    },
-  };
-}
-
-export function generateFAQSchema() {
+export function generateFAQSchema(faqs: { question: string; answer: string }[]) {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "How does QuietWare's noise reduction technology work?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Our plates are engineered with a proprietary acoustic dampening core sandwiched between layers of premium ceramic. This technology absorbs vibrations and significantly reduces the sound of clattering dishes, silverware, and glass contact.",
-        },
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
       },
-      {
-        "@type": "Question",
-        name: "Are QuietWare plates durable and chip-resistant?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Yes! Our plates are made from high-fired ceramic composite that passes rigorous impact resistance tests. They are significantly more chip-resistant than traditional ceramic or porcelain while maintaining an elegant, slim profile.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "How long does shipping take?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "We ship from our US-based warehouses. Standard shipping (3-5 business days) is free on orders over $50. Express shipping (1-2 business days) is available at checkout. All orders include tracking.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "What is your return policy?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "We offer a 30-day satisfaction guarantee. If you're not completely satisfied with your purchase, return the items in original condition for a full refund. We also provide a 5-year warranty against manufacturing defects.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Are the materials safe and eco-friendly?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Absolutely. Our plates are made from 100% non-toxic, food-safe materials. We use sustainable manufacturing processes and our packaging is fully recyclable. QuietWare is committed to reducing environmental impact.",
-        },
-      },
-    ],
+    })),
   };
 }
 
@@ -246,5 +243,24 @@ export function generateBreadcrumbSchema(items: { name: string; url: string }[])
       name: item.name,
       item: item.url,
     })),
+  };
+}
+
+export function generateCollectionPageSchema(title: string, description: string, products: Product[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: title,
+    description,
+    url: `${BASE_URL}/products`,
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: products.map((product, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        url: `${BASE_URL}/products/${product.slug}`,
+        name: product.name,
+      })),
+    },
   };
 }

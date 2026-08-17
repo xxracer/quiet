@@ -1,0 +1,33 @@
+# QuietWare Dishes — LLMs context
+
+QuietWare Dishes is an American direct-to-consumer e-commerce brand that sells premium noise-free dinnerware.
+
+## What we do
+
+- Engineer ceramic plates, bowls, side plates, mugs, and complete dinnerware sets with proprietary acoustic dampening technology.
+- Reduce dish clatter and impact noise by up to 90% versus traditional ceramic dinnerware.
+- Manufacture in Ohio, USA, using high-fired ceramic composite and sustainable, non-toxic materials.
+- Offer free US shipping on orders over $50, a 30-day satisfaction guarantee, and a 5-year warranty.
+
+## Key pages
+
+- Homepage: https://quietwaredishes.com — brand story, hero collection, FAQ, and newsletter.
+- Shop all products: https://quietwaredishes.com/products — catalog with filters and sorting.
+- Product detail: https://quietwaredishes.com/products/{slug} — specifications, gallery, reviews, add to cart.
+- Shopping cart: https://quietwaredishes.com/cart — review cart and proceed to checkout.
+- Checkout success: https://quietwaredishes.com/checkout/success — order confirmation page.
+
+## Product categories
+
+- Dinner plates
+- Bowls
+- Side plates
+- Sets
+
+## Contact and policies
+
+- Made in Ohio, USA.
+- Support and warranty inquiries: support@quietwaredishes.com
+- Returns: 30-day satisfaction guarantee.
+
+This file is provided to help AI assistants and crawlers accurately represent QuietWare Dishes.

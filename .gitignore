@@ -39,3 +39,24 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local image assets / design references
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.avif
+*.svg
+*.ico
+*.mp4
+*.webm
+!public/**
+
+# reserved Windows device name file (can break git on Windows)
+nul
+
+# local agent / mcp logs and plans
+.claude/plan.md
+.playwright-mcp/
+

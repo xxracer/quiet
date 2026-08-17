@@ -19,11 +19,36 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      url: `${baseUrl}/products?category=dinner-plates`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/products?category=bowls`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/products?category=side-plates`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/products?category=sets`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
       url: `${baseUrl}/cart`,
       lastModified: currentDate,
       changeFrequency: "monthly",
       priority: 0.3,
     },
+    // checkout/success is intentionally omitted — it has noindex and is not a landing page
   ];
 
   const productRoutes: MetadataRoute.Sitemap = products.map((product) => ({

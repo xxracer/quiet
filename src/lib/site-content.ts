@@ -62,9 +62,9 @@ export const defaultSiteContent: SiteContent = {
     description: "Engineered with acoustic dampening technology for truly peaceful dining. Join thousands of satisfied customers who chose the #1 quality-price quiet dinnerware brand in America.",
     cta1Text: "Shop Collection",
     cta1Link: "/products",
-    cta2Text: "Learn More",
+    cta2Text: "How It Works",
     cta2Link: "/about",
-    imageUrl: "https://images.unsplash.com/photo-1615366734858-5d8c6f328d6e?w=1200&h=800&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1489421234833-3e44ab2f5470?w=1200&h=800&fit=crop",
   },
   featuredProducts: {
     title: "Best Sellers",
@@ -75,7 +75,7 @@ export const defaultSiteContent: SiteContent = {
     badge: "Why Choose QuietWare",
     title: "The #1 Quality-Price Choice in Quiet Dinnerware",
     description: "We've combined cutting-edge acoustic dampening technology with premium materials to create dinnerware that delivers exceptional quietness without compromising on aesthetics or durability. Our direct-to-consumer model means you get museum-quality plates at a fraction of the cost of traditional premium brands.",
-    imageUrl: "https://images.unsplash.com/photo-1615366734858-5d8c6f328d6e?w=800&h=800&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1771154135113-1fa3053840ba?w=800&h=800&fit=crop",
   },
   testimonials: [
     {

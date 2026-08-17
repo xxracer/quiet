@@ -88,7 +88,6 @@ export async function createProduct(data: Partial<Product>): Promise<string> {
   };
   products.push(product);
   await writeProducts(products);
-  console.log("Product created:", product);
   return id;
 }
 

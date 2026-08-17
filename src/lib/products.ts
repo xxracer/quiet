@@ -5,21 +5,21 @@ export interface Product {
   price: number;
   comparePrice?: number;
   images: string[];
-  category: "dinner-plates" | "bowls" | "side-plates" | "sets";
+  category: string;
   shortDescription: string;
   fullDescription: string;
   specifications: {
     diameter?: string;
-    material: string;
-    noiseReduction: string;
-    weight: string;
-    dishwasherSafe: boolean;
+    material?: string;
+    noiseReduction?: string;
+    weight?: string;
+    dishwasherSafe?: boolean;
   };
-  rating: number;
-  reviews: number;
+  rating?: number;
+  reviews?: number;
   featured: boolean;
   usaMade: boolean;
-  inStock: boolean;
+  inStock?: boolean;
 }
 
 export const products: Product[] = [
@@ -30,7 +30,7 @@ export const products: Product[] = [
     price: 29.99,
     comparePrice: 39.99,
     images: [
-      "https://images.unsplash.com/photo-1615366734858-5d8c6f328d6e?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1489421234833-3e44ab2f5470?w=800&h=800&fit=crop",
       "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=800&h=800&fit=crop",
     ],
     category: "dinner-plates",
@@ -58,7 +58,7 @@ export const products: Product[] = [
     price: 34.99,
     comparePrice: 44.99,
     images: [
-      "https://images.unsplash.com/photo-1615485095808-5b46c6a80511?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1776729996562-00f4c7cbba41?w=800&h=800&fit=crop",
       "https://images.unsplash.com/photo-1548345680-f5475ea5df84?w=800&h=800&fit=crop",
     ],
     category: "bowls",
@@ -87,7 +87,7 @@ export const products: Product[] = [
     comparePrice: 119.99,
     images: [
       "https://images.unsplash.com/photo-1584589167171-541ce45f1eea?w=800&h=800&fit=crop",
-      "https://images.unsplash.com/photo-1578749556568-b2eac293ee23?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1771154135113-1fa3053840ba?w=800&h=800&fit=crop",
     ],
     category: "sets",
     shortDescription:
@@ -113,8 +113,8 @@ export const products: Product[] = [
     price: 19.99,
     comparePrice: 24.99,
     images: [
-      "https://images.unsplash.com/photo-1598866644171-941f1c43e8da?w=800&h=800&fit=crop",
-      "https://images.unsplash.com/photo-1584568694244-14fbdf83bd5d?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1518184961573-4474fec952df?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1764874299289-f07dd3015169?w=800&h=800&fit=crop",
     ],
     category: "side-plates",
     shortDescription:
@@ -141,7 +141,7 @@ export const products: Product[] = [
     price: 24.99,
     images: [
       "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=800&h=800&fit=crop",
-      "https://images.unsplash.com/photo-1577937927133-66ef1bb58357?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1626971847402-ca3fde60974d?w=800&h=800&fit=crop",
     ],
     category: "sets",
     shortDescription:
@@ -167,7 +167,7 @@ export const products: Product[] = [
     price: 149.99,
     comparePrice: 179.99,
     images: [
-      "https://images.unsplash.com/photo-1507049941118-56166885465e?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1768594407433-40b4b11039e8?w=800&h=800&fit=crop",
       "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=800&h=800&fit=crop",
     ],
     category: "sets",
